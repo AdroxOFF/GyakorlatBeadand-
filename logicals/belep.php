@@ -1,25 +1,32 @@
 <?php
-if(isset($_POST['felhasznalo']) && isset($_POST['jelszo'])) {
+include('./includes/db.php');
+
+if (isset($_POST['felhasznalo']) && isset($_POST['jelszo'])) {
     try {
-        // Kapcsolódás
-        $dbh = new PDO('mysql:host=localhost;dbname=gyakorlat7', 'root', '',
-                        array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION));
-        $dbh->query('SET NAMES utf8 COLLATE utf8_hungarian_ci');
-        
-        // Felhsználó keresése
-        $sqlSelect = "select id, csaladi_nev, uto_nev from felhasznalok where bejelentkezes = :bejelentkezes and jelszo = sha1(:jelszo)";
-        $sth = $dbh->prepare($sqlSelect);
-        $sth->execute(array(':bejelentkezes' => $_POST['felhasznalo'], ':jelszo' => $_POST['jelszo']));
+        $dbh = getDB();
+        $sth = $dbh->prepare(
+            "SELECT id, csaladi_nev, uto_nev FROM felhasznalok
+             WHERE bejelentkezes = :bej AND jelszo = sha1(:jelszo)"
+        );
+        $sth->execute(array(
+            ':bej'    => $_POST['felhasznalo'],
+            ':jelszo' => $_POST['jelszo']
+        ));
         $row = $sth->fetch(PDO::FETCH_ASSOC);
-        if($row) {
-            $_SESSION['csn'] = $row['csaladi_nev']; $_SESSION['un'] = $row['uto_nev']; $_SESSION['login'] = $_POST['felhasznalo'];
+        if ($row) {
+            $_SESSION['csn']   = $row['csaladi_nev'];
+            $_SESSION['un']    = $row['uto_nev'];
+            $_SESSION['login'] = $_POST['felhasznalo'];
+            header("Location: .");
+            exit();
+        } else {
+            $belepes_hiba = "Hibás felhasználónév vagy jelszó!";
         }
+    } catch (PDOException $e) {
+        $belepes_hiba = "Adatbázis hiba: " . $e->getMessage();
     }
-    catch (PDOException $e) {
-        $errormessage = "Hiba: ".$e->getMessage();
-    }      
-}
-else {
+} else {
     header("Location: .");
+    exit();
 }
 ?>
