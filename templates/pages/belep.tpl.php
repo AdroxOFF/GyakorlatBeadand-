@@ -1,13 +1,8 @@
-<?php if(isset($row)) { ?>
-    <?php if($row) { ?>
-        <h1>Bejelentkezett:</h1>
-        Azonosító: <strong><?= $row['id'] ?></strong><br><br>
-        Név: <strong><?= $row['csaladi_nev']." ".$row['uto_nev'] ?></strong>
-    <?php } else { ?>
-        <h1>A bejelentkezés nem sikerült!</h1>
-        <a href="belepes" >Próbálja újra!</a>
-    <?php } ?>
-<?php } ?>
-<?php if(isset($errormessage)) { ?>
-    <h2><?= $errormessage ?></h2>
-<?php } ?>
+<?php
+// Ha siker a login akk ---------> (logicals/belep.php kezeli)
+// Ha mégis ideér (hiba esetén a logicals megállíttja), megjelenítjük a hibát
+if (isset($belepes_hiba)) {
+    echo '<div class="uzenet-hiba">' . htmlspecialchars($belepes_hiba) . '</div>';
+    echo '<a href="belepes" class="gomb gomb-secondary" style="margin-top:12px; display:inline-block;">↩️ Vissza</a>';
+}
+?>
