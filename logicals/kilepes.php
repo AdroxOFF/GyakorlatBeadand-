@@ -1,6 +1,7 @@
 <?php
-$data = $_SESSION;
-unset($_SESSION["csn"]);
-unset($_SESSION["un"]);
-unset($_SESSION["login"]);
+$kilep_nev = '';
+if (isset($_SESSION['csn'])) {
+    $kilep_nev = $_SESSION['csn'] . ' ' . $_SESSION['un'] . ' (' . $_SESSION['login'] . ')';
+    unset($_SESSION['csn'], $_SESSION['un'], $_SESSION['login']);
+}
 ?>
