@@ -1,43 +1,71 @@
 <?php session_start(); ?>
-<?php if(file_exists('./logicals/'.$keres['fajl'].'.php')) { include("./logicals/{$keres['fajl']}.php"); } ?>
+<?php if (file_exists('./logicals/' . $keres['fajl'] . '.php')) {
+    include("./logicals/{$keres['fajl']}.php");
+} ?>
 <!DOCTYPE html>
-<html>
+<html lang="hu">
 <head>
-	<meta charset="utf-8">
-	<title><?= $ablakcim['cim'] . ( (isset($ablakcim['mottó'])) ? ('|' . $ablakcim['mottó']) : '' ) ?></title>
-	<link rel="stylesheet" href="./styles/stilus.css" type="text/css">
-	<?php if(file_exists('./styles/'.$keres['fajl'].'.css')) { ?><link rel="stylesheet" href="./styles/<?= $keres['fajl']?>.css" type="text/css"><?php } ?>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($ablakcim['cim']) ?><?= isset($keres['szoveg']) && $keres['szoveg'] ? ' | ' . htmlspecialchars($keres['szoveg']) : '' ?></title>
+    <link rel="stylesheet" href="./styles/stilus.css" type="text/css">
+    <?php if (file_exists('./styles/' . $keres['fajl'] . '.css')) { ?>
+        <link rel="stylesheet" href="./styles/<?= $keres['fajl'] ?>.css" type="text/css">
+    <?php } ?>
 </head>
 <body>
-	<header>
-		<img src="./images/<?=$fejlec['kepforras']?>" alt="<?=$fejlec['kepalt']?>">
-		<h1><?= $fejlec['cim'] ?></h1>
-		<?php if (isset($fejlec['motto'])) { ?><h2><?= $fejlec['motto'] ?></h2><?php } ?>
-		<?php if(isset($_SESSION['login'])) { ?>Bejlentkezve: <strong><?= $_SESSION['csn']." ".$_SESSION['un']." (".$_SESSION['login'].")" ?></strong><?php } ?>
-	</header>
-    <div id="wrapper">
-        <aside id="nav">
-            <nav>
-                <ul>
-					<?php foreach ($oldalak as $url => $oldal) { ?>
-						<?php if(! isset($_SESSION['login']) && $oldal['menun'][0] || isset($_SESSION['login']) && $oldal['menun'][1]) { ?>
-							<li<?= (($oldal == $keres) ? ' class="active"' : '') ?>>
-							<a href="<?= ($url == '/') ? '.' : $url ?>">
-							<?= $oldal['szoveg'] ?></a>
-							</li>
-						<?php } ?>
-					<?php } ?>
-                </ul>
-            </nav>
-        </aside>
-        <div id="content">
-            <?php include("./templates/pages/{$keres['fajl']}.tpl.php"); ?>
+
+<header>
+    <div class="header-inner">
+        <div class="header-logo">
+            <img src="./images/<?= htmlspecialchars($fejlec['kepforras']) ?>"
+                 alt="<?= htmlspecialchars($fejlec['kepalt']) ?>">
         </div>
+        <div class="header-text">
+            <h1><?= htmlspecialchars($fejlec['cim']) ?></h1>
+            <?php if (!empty($fejlec['motto'])) { ?>
+                <p class="motto"><?= htmlspecialchars($fejlec['motto']) ?></p>
+            <?php } ?>
+        </div>
+        <?php if (isset($_SESSION['login'])) { ?>
+            <div class="bejelentkezett">
+                🔓 Bejelentkezett: <strong><?= htmlspecialchars($_SESSION['csn'] . ' ' . $_SESSION['un']) ?></strong>
+                (<?= htmlspecialchars($_SESSION['login']) ?>)
+            </div>
+        <?php } ?>
     </div>
-    <footer>
-        <?php if(isset($lablec['copyright'])) { ?>&copy;&nbsp;<?= $lablec['copyright'] ?> <?php } ?>
-		&nbsp;
-        <?php if(isset($lablec['ceg'])) { ?><?= $lablec['ceg']; ?><?php } ?>
-    </footer>
+</header>
+
+<nav id="fomenu">
+    <ul>
+        <?php foreach ($oldalak as $url => $oldal) { ?>
+            <?php
+            $latható = (!isset($_SESSION['login']) && $oldal['menun'][0])
+                    || (isset($_SESSION['login']) && $oldal['menun'][1]);
+            if ($latható) { ?>
+                <li<?= ($oldal === $keres) ? ' class="active"' : '' ?>>
+                    <a href="<?= ($url === '/') ? '.' : htmlspecialchars($url) ?>">
+                        <?= htmlspecialchars($oldal['szoveg']) ?>
+                    </a>
+                </li>
+            <?php } ?>
+        <?php } ?>
+    </ul>
+</nav>
+
+<div id="wrapper">
+    <main id="content">
+        <?php include("./templates/pages/{$keres['fajl']}.tpl.php"); ?>
+    </main>
+</div>
+
+<footer>
+    <p>
+        <?php if (isset($lablec['copyright'])) { ?>&copy;&nbsp;<?= htmlspecialchars($lablec['copyright']) ?>&nbsp;<?php } ?>
+        <?php if (isset($lablec['ceg'])) { ?><strong><?= htmlspecialchars($lablec['ceg']) ?></strong><?php } ?>
+        &nbsp;|&nbsp; Vízvezeték-szerelés, csőtörés-elhárítás
+    </p>
+</footer>
+
 </body>
 </html>
