@@ -1,6 +1,103 @@
-<h2>Adatok:</h2>
-<p>Ügyvezető: <strong>Valaki Az</strong></p>
-<p>E-mail: <strong>valaki.az@minihonlap.hu</strong></p>
-<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2726.3375296155727!2d19.66695091525771!3d46.89607994478184!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4743da7a6c479e1d%3A0xc8292b3f6dc69e7f!2sPallasz+Ath%C3%A9n%C3%A9+Egyetem+GAMF+Kar!5e0!3m2!1shu!2shu!4v1475753185783" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>
-<br>
-<a target="_blank" href="https://www.google.hu/maps/place/Pallasz+Ath%C3%A9n%C3%A9+Egyetem+GAMF+Kar/@46.8960799,19.6669509,17z/data=!3m1!4b1!4m5!3m4!1s0x4743da7a6c479e1d:0xc8292b3f6dc69e7f!8m2!3d46.8960763!4d19.6691396?hl=hu">Nagyobb térkép</a>
+<h2>📬 Kapcsolat</h2>
+<p>Vegye fel velünk a kapcsolatot az alábbi űrlapon! Igyekszünk 24 órán belül válaszolni.</p>
+
+<?php if (isset($szerver_hiba)) { ?>
+    <div class="uzenet-hiba"><?= htmlspecialchars($szerver_hiba) ?></div>
+<?php } ?>
+
+<div class="urlap">
+    <!--
+        A HTML5 kötelezőség (required, type="email", pattern) szándékosan NINCS használva.
+        Az ellenőrzést JavaScript (kliens) és PHP (szerver) végzi.
+    -->
+    <form id="kapcsolatForm" action="uzkld" method="post" novalidate onsubmit="return validalUr(this)">
+
+        <div class="urlap-mezo">
+            <label for="nev">Teljes neve: <span style="color:red">*</span></label>
+            <input type="text" id="nev" name="nev"
+                   placeholder="Pl.: Kovács János"
+                   value="<?= htmlspecialchars($_POST['nev'] ?? '') ?>">
+            <span class="hiba-uzenet" id="nev-hiba">⚠️ Kérem adja meg a nevét!</span>
+        </div>
+
+        <div class="urlap-mezo">
+            <label for="email">E-mail cím: <span style="color:red">*</span></label>
+            <input type="text" id="email" name="email"
+                   placeholder="Pl.: pelda@email.hu"
+                   value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
+            <span class="hiba-uzenet" id="email-hiba">⚠️ Kérem adjon meg érvényes e-mail címet!</span>
+        </div>
+
+        <div class="urlap-mezo">
+            <label for="targy">Tárgy: <span style="color:red">*</span></label>
+            <input type="text" id="targy" name="targy"
+                   placeholder="Pl.: Csőtörés bejelentés"
+                   value="<?= htmlspecialchars($_POST['targy'] ?? '') ?>">
+            <span class="hiba-uzenet" id="targy-hiba">⚠️ Kérem adja meg az üzenet tárgyát!</span>
+        </div>
+
+        <div class="urlap-mezo">
+            <label for="uzenet">Üzenet: <span style="color:red">*</span></label>
+            <textarea id="uzenet" name="uzenet"
+                      placeholder="Írja ide üzenetét (minimum 10 karakter)..."><?= htmlspecialchars($_POST['uzenet'] ?? '') ?></textarea>
+            <span class="hiba-uzenet" id="uzenet-hiba">⚠️ Az üzenet legalább 10 karakter legyen!</span>
+        </div>
+
+        <button type="submit" class="gomb gomb-primary">📤 Üzenet küldése</button>
+        <p style="font-size:0.83em; color:#546e7a; margin-top:8px;">
+            <span style="color:red">*</span> Kötelező mezők
+        </p>
+    </form>
+</div>
+
+<script>
+    /**
+     * Kliens oldali űrlapellenőrzés – JavaScript
+     * A HTML5 validáció ki van kapcsolva (novalidate), ezt végzi el.
+     */
+    function validalUr(form) {
+        let hibas = false;
+
+        function mezoHiba(mezoId, hibaId, felt) {
+            const hibaElem = document.getElementById(hibaId);
+            if (felt) {
+                hibaElem.style.display = 'block';
+                document.getElementById(mezoId).style.borderColor = '#c62828';
+                hibas = true;
+            } else {
+                hibaElem.style.display = 'none';
+                document.getElementById(mezoId).style.borderColor = '#90caf9';
+            }
+        }
+
+        const nev    = form.nev.value.trim();
+        const email  = form.email.value.trim();
+        const targy  = form.targy.value.trim();
+        const uzenet = form.uzenet.value.trim();
+
+        // E-mail regex ellenőrzés
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        mezoHiba('nev',    'nev-hiba',    nev.length < 2);
+        mezoHiba('email',  'email-hiba',  !emailRegex.test(email));
+        mezoHiba('targy',  'targy-hiba',  targy.length < 2);
+        mezoHiba('uzenet', 'uzenet-hiba', uzenet.length < 10);
+
+        if (hibas) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        return !hibas;
+    }
+
+    // Valós idejű ellenőrzés blur eseményre
+    document.addEventListener('DOMContentLoaded', function () {
+        ['nev', 'email', 'targy', 'uzenet'].forEach(function(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('blur', function() {
+                    document.getElementById('kapcsolatForm').dispatchEvent;
+                });
+            }
+        });
+    });
+</script>
