@@ -1,0 +1,1 @@
+<?php /* Ez az oldal mindig átirányít */ ?>
