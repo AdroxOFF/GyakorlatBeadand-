@@ -36,6 +36,7 @@
     </div>
 </header>
 
+<button class="hamburger" id="hamburger" onclick="toggleMenu()">☰</button>
 <nav id="fomenu">
     <ul>
         <?php foreach ($oldalak as $url => $oldal) { ?>
@@ -67,5 +68,13 @@
     </p>
 </footer>
 
+<script>
+    function toggleMenu() {
+        const menu = document.getElementById('fomenu');
+        const btn  = document.getElementById('hamburger');
+        menu.classList.toggle('open');
+        btn.textContent = menu.classList.contains('open') ? '✕' : '☰';
+    }
+</script>
 </body>
 </html>
